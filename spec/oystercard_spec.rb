@@ -28,7 +28,7 @@ RSpec.describe Oystercard do
   end
 
   it 'not in journey when touch out' do
-    subject.touch_out
+    subject.touch_out(station)
     expect(subject).not_to be_in_journey
   end
 
@@ -38,7 +38,7 @@ RSpec.describe Oystercard do
   end
 
   it "deducts £#{Oystercard::MINIMUM_FARE} upon touch out" do
-    expect {subject.touch_out}. to change {subject.balance}.by(-Oystercard::MINIMUM_FARE)
+    expect {subject.touch_out(station)}. to change {subject.balance}.by(-Oystercard::MINIMUM_FARE)
   end
 
   it "remembers entry station after touch in" do
@@ -50,8 +50,13 @@ RSpec.describe Oystercard do
   it "sets entry station to nil when touching out" do
     subject.top_up(10)
     subject.touch_in(station)
-    subject.touch_out
+    subject.touch_out(station)
     expect(subject.entry_station).to be_nil
+  end
+
+  it 'sets exit station whebn touching out' do
+    subject.touch_out(station)
+    expect(subject.exit_station).to eq(station)
   end
 
 end

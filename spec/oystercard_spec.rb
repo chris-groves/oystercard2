@@ -1,6 +1,7 @@
 require "oystercard"
 
 RSpec.describe Oystercard do
+  let(:station) {"Bank"}
   it 'has an initial balance of 0' do
     expect(subject.balance).to eq(0)
   end
@@ -13,7 +14,7 @@ RSpec.describe Oystercard do
 
   it "has a maximum limit of £#{Oystercard::LIMIT}" do
     message = "Error: balance cannot exceed £#{Oystercard::LIMIT}"
-    expect { subject.top_up(100) }.to raise_error(message)
+    expect{ subject.top_up(100) }.to raise_error(message)
   end
 
   it 'is not in journey' do
@@ -22,7 +23,7 @@ RSpec.describe Oystercard do
 
   it 'in journey when touch in' do
     subject.top_up(10)
-    subject.touch_in
+    subject.touch_in(station)
     expect(subject).to be_in_journey
   end
 
@@ -33,10 +34,24 @@ RSpec.describe Oystercard do
 
   it "prevents touch in if balance is less than £#{Oystercard::MINIMUM_FARE}" do
     message = "Error: Not enough funds"
-    expect { subject.touch_in }.to raise_error(message)
+    expect { subject.touch_in(station) }.to raise_error(message)
   end
 
   it "deducts £#{Oystercard::MINIMUM_FARE} upon touch out" do
     expect {subject.touch_out}. to change {subject.balance}.by(-Oystercard::MINIMUM_FARE)
   end
+
+  it "remembers entry station after touch in" do
+    subject.top_up(10)
+    subject.touch_in(station)
+    expect(subject.entry_station).to eq(station)
+  end
+
+  it "sets entry station to nil when touching out" do
+    subject.top_up(10)
+    subject.touch_in(station)
+    subject.touch_out
+    expect(subject.entry_station).to be_nil
+  end
+
 end

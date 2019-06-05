@@ -16,10 +16,6 @@ RSpec.describe Oystercard do
     expect { subject.top_up(100) }.to raise_error(message)
   end
 
-  it 'deducts a fare amount of 3' do
-    expect{ subject.deduct_fare 3 }.to change{ subject.balance }.by -3
-  end
-
   it 'is not in journey' do
     expect(subject).not_to be_in_journey
   end
@@ -38,5 +34,9 @@ RSpec.describe Oystercard do
   it "prevents touch in if balance is less than £#{Oystercard::MINIMUM_FARE}" do
     message = "Error: Not enough funds"
     expect { subject.touch_in }.to raise_error(message)
+  end
+
+  it "deducts £#{Oystercard::MINIMUM_FARE} upon touch out" do
+    expect {subject.touch_out}. to change {subject.balance}.by(-Oystercard::MINIMUM_FARE)
   end
 end

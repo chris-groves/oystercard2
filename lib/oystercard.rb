@@ -11,15 +11,11 @@ class Oystercard
   end
 
   def top_up(amount)
-    @balance + amount > LIMIT ? limit_error : @balance += amount
+    balance + amount > LIMIT ? limit_error : @balance += amount
   end
 
   def limit_error
     raise "Error: balance cannot exceed £#{Oystercard::LIMIT}"
-  end
-
-  def deduct_fare(amount)
-    @balance -= amount
   end
 
   def in_journey?
@@ -33,10 +29,17 @@ class Oystercard
   end
 
   def touch_out
+    deduct_fare(MINIMUM_FARE)
     @in_use = false
   end
 
   def not_enough_funds?
     balance < MINIMUM_FARE
+  end
+
+  private
+
+  def deduct_fare(amount)
+    @balance -= amount
   end
 end

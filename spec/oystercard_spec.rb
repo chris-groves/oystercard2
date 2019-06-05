@@ -11,9 +11,9 @@ RSpec.describe Oystercard do
     expect(subject.balance).to eq(5)
   end
 
-  it 'has a maximum limit of 90' do
-    LIMIT = 90
-    expect { subject.top_up(100) }.to raise_error("Error: top up will exceed balance limit of £#{LIMIT}")
+  it "has a maximum limit of £#{Oystercard::LIMIT}" do
+    message = "Error: balance cannot exceed £#{Oystercard::LIMIT}"
+    expect { subject.top_up(100) }.to raise_error(message)
   end
 
   it 'deducts a fare amount of 3' do
@@ -35,7 +35,8 @@ RSpec.describe Oystercard do
     expect(subject).not_to be_in_journey
   end
 
-  it "prevents touch in if balance is less than £1" do
-    expect { subject.touch_in }.to raise_error("Error: Not enough funds")
+  it "prevents touch in if balance is less than £#{Oystercard::MINIMUM_FARE}" do
+    message = "Error: Not enough funds"
+    expect { subject.touch_in }.to raise_error(message)
   end
 end

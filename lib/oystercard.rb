@@ -3,6 +3,7 @@ class Oystercard
   attr_reader :in_use
 
   LIMIT = 90
+  MINIMUM_FARE = 1
 
   def initialize
     @balance = 0
@@ -14,7 +15,7 @@ class Oystercard
   end
 
   def limit_error
-    raise "Error: top up will exceed balance limit of £#{LIMIT}"
+    raise "Error: balance cannot exceed £#{Oystercard::LIMIT}"
   end
 
   def deduct_fare(amount)
@@ -26,11 +27,16 @@ class Oystercard
   end
 
   def touch_in
-    raise "Error: Not enough funds" if balance < 1
+    raise "Error: Not enough funds" if not_enough_funds?
+
     @in_use = true
   end
 
   def touch_out
     @in_use = false
+  end
+
+  def not_enough_funds?
+    balance < MINIMUM_FARE
   end
 end

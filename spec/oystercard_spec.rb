@@ -25,6 +25,7 @@ RSpec.describe Oystercard do
   end
 
   it 'in journey when touch in' do
+    subject.top_up(10)
     subject.touch_in
     expect(subject).to be_in_journey
   end
@@ -32,5 +33,9 @@ RSpec.describe Oystercard do
   it 'not in journey when touch out' do
     subject.touch_out
     expect(subject).not_to be_in_journey
+  end
+
+  it "prevents touch in if balance is less than £1" do
+    expect { subject.touch_in }.to raise_error("Error: Not enough funds")
   end
 end

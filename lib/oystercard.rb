@@ -26,10 +26,11 @@ class Oystercard
   end
 
   def touch_in
+    raise "Error: Not enough funds" if balance < 1
     @in_use = true
   end
 
   def touch_out
     @in_use = false
-  end 
+  end
 end

@@ -41,12 +41,6 @@ RSpec.describe Oystercard do
     expect {subject.touch_out(station)}. to change {subject.balance}.by(-Oystercard::MINIMUM_FARE)
   end
 
-  it "remembers entry station after touch in" do
-    subject.top_up(10)
-    subject.touch_in(station)
-    expect(subject.entry_station).to eq(station)
-  end
-
   it "sets entry station to nil when touching out" do
     subject.top_up(10)
     subject.touch_in(station)
@@ -54,9 +48,18 @@ RSpec.describe Oystercard do
     expect(subject.entry_station).to be_nil
   end
 
-  it 'sets exit station whebn touching out' do
-    subject.touch_out(station)
-    expect(subject.exit_station).to eq(station)
+  it 'adds the entry station when touched in' do
+    subject.top_up(10)
+    subject.touch_in(station)
+    expect(subject.journey[:entry_station]).to eq(station)
   end
+
+  it 'adds the exit station when touched out' do
+    subject.top_up(10)
+    subject.touch_in(station)
+    subject.touch_out(station)
+    expect(subject.journey[:exit_station]).to eq(station)
+  end
+
 
 end
